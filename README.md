@@ -47,7 +47,7 @@ const reducer = (state: State, action: Actions): State => {
 export const FormDataProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, {} as State);
 
-  const value = useMemo(() => {
+  const api = useMemo(() => {
     const onSave = () => {
       // send the request to the backend here
     };
@@ -63,9 +63,12 @@ export const FormDataProvider = ({ children }: { children: ReactNode }) => {
     const onCountryChange = (country: Country) => {
       dispatch({ type: 'updateCountry', country });
     };
-  }, [state]);
 
-  return <FormContext.Provider value={value}>{children}</FormContext.Provider>;
+    return { onSave, onDiscountChange, onNameChange, onCountryChange };
+    // no more dependency on state! The api value will stay the same
+  }, []);
+
+  return <FormContext.Provider value={{ state, ...api }>{children}</FormContext.Provider>;
 };
 ```
 
@@ -83,4 +86,41 @@ export default function App() {
     </FormDataProvider>
   );
 }
+```
+
+5. Split to improve performance
+If parts of the app only uses the api part or only the state part we can split up the Context into two, to avoid unneccessary re-rendering.
+
+```ts
+type State = {
+  name: string;
+  country: Country;
+  discount: number;
+};
+
+type API = {
+  onNameChange: (name: string) => void;
+  onCountryChange: (name: Country) => void;
+  onDiscountChange: (price: number) => void;
+  onSave: () => void;
+};
+
+const FormDataContext = createContext<State>({} as State);
+const FormAPIContext = createContext<API>({} as API);
+
+const FormDataProvider = () => {
+  const [state, dispatch] = useReducer(reducer, {} as State);
+
+  const api = useMemo(() => {
+    // ... all `on*` callbacks
+
+    return { onSave, onDiscountChange, onNameChange, onCountryChange };
+  }, []);
+
+  return (
+    <FormAPIContext.Provider value={api}>
+      <FormDataContext.Provider value={state}>{children}</FormDataContext.Provider>
+    </FormAPIContext.Provider>
+  );
+};
 ```
