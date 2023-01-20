@@ -62,3 +62,14 @@ export const FormDataProvider = ({ children }: { children: ReactNode }) => {
 ```ts
 export const useFormState = () => useContext(FormContext);
 ```
+
+4. Implement Provider
+```ts
+export default function App() {
+  return (
+    <FormDataProvider>
+      <Form />
+    </FormDataProvider>
+  );
+}
+```
