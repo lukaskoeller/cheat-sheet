@@ -57,3 +57,8 @@ export const FormDataProvider = ({ children }: { children: ReactNode }) => {
   return <FormContext.Provider value={value}>{children}</FormContext.Provider>;
 };
 ```
+
+3. Create hook with Context
+```ts
+export const useFormState = () => useContext(FormContext);
+```
