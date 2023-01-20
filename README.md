@@ -15,3 +15,45 @@
 * `React.memo` for components
 
 * Only memoize if: every single prop and the component itself are memoized.
+
+### Context
+
+1. Create Context
+```ts
+const FormContext = createContext<Context>({} as Context);
+```
+
+2. Create Provider
+```ts
+export const FormDataProvider = ({ children }: { children: ReactNode }) => {
+  const [state, setState] = useState<State>({} as State);
+
+  const value = useMemo(() => {
+    const onSave = () => {
+      // send the request to the backend here
+    };
+
+    const onDiscountChange = (discount: number) => {
+      setState({ ...state, discount });
+    };
+
+    const onNameChange = (name: string) => {
+      setState({ ...state, name });
+    };
+
+    const onCountryChange = (country: Country) => {
+      setState({ ...state, country });
+    };
+
+    return {
+      state,
+      onSave,
+      onDiscountChange,
+      onNameChange,
+      onCountryChange,
+    };
+  }, [state]);
+
+  return <FormContext.Provider value={value}>{children}</FormContext.Provider>;
+};
+```
