@@ -23,10 +23,29 @@
 const FormContext = createContext<Context>({} as Context);
 ```
 
-2. Create Provider
+2. Add reducer
+```ts
+type Actions =
+  | { type: 'updateName'; name: string }
+  | { type: 'updateCountry'; country: Country }
+  | { type: 'updateDiscount'; discount: number };
+
+const reducer = (state: State, action: Actions): State => {
+  switch (action.type) {
+    case 'updateName':
+      return { ...state, name: action.name };
+    case 'updateDiscount':
+      return { ...state, discount: action.discount };
+    case 'updateCountry':
+      return { ...state, country: action.country };
+  }
+};
+```
+
+3. Create Provider
 ```ts
 export const FormDataProvider = ({ children }: { children: ReactNode }) => {
-  const [state, setState] = useState<State>({} as State);
+  const [state, dispatch] = useReducer(reducer, {} as State);
 
   const value = useMemo(() => {
     const onSave = () => {
@@ -34,23 +53,15 @@ export const FormDataProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const onDiscountChange = (discount: number) => {
-      setState({ ...state, discount });
+      dispatch({ type: 'updateDiscount', discount });
     };
 
     const onNameChange = (name: string) => {
-      setState({ ...state, name });
+      dispatch({ type: 'updateName', name });
     };
 
     const onCountryChange = (country: Country) => {
-      setState({ ...state, country });
-    };
-
-    return {
-      state,
-      onSave,
-      onDiscountChange,
-      onNameChange,
-      onCountryChange,
+      dispatch({ type: 'updateCountry', country });
     };
   }, [state]);
 
