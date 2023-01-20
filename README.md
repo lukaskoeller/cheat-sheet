@@ -88,7 +88,7 @@ export default function App() {
 }
 ```
 
-5. Split to improve performance
+5. Split into two `Context`s to improve performance
 If parts of the app only uses the api part or only the state part we can split up the Context into two, to avoid unneccessary re-rendering.
 
 ```ts
@@ -122,5 +122,19 @@ const FormDataProvider = () => {
       <FormDataContext.Provider value={state}>{children}</FormDataContext.Provider>
     </FormAPIContext.Provider>
   );
+};
+```
+
+```ts
+export const useFormData = () => useContext(FormDataContext);
+export const useFormAPI = () => useContext(FormAPIContext);
+```
+
+Consume like this:
+```ts
+export const SelectCountryFormComponent = () => {
+  const { onCountryChange } = useFormAPI();
+
+  return <SelectCountry onChange={onCountryChange} />;
 };
 ```
