@@ -72,12 +72,12 @@ We can structure a layer in a hierarchical way. The rules are:
 > Reference: https://www.developerway.com/posts/how-to-write-performant-react-apps-with-context
 
 1. Create Context
-```ts
+```tsx
 const FormContext = createContext<Context>({} as Context);
 ```
 
 2. Add reducer
-```ts
+```tsx
 type Actions =
   | { type: 'updateName'; name: string }
   | { type: 'updateCountry'; country: Country }
@@ -96,7 +96,7 @@ const reducer = (state: State, action: Actions): State => {
 ```
 
 3. Create Provider
-```ts
+```tsx
 export const FormDataProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, {} as State);
 
@@ -126,12 +126,12 @@ export const FormDataProvider = ({ children }: { children: ReactNode }) => {
 ```
 
 3. Create hook with Context
-```ts
+```tsx
 export const useFormState = () => useContext(FormContext);
 ```
 
 4. Implement Provider
-```ts
+```tsx
 export default function App() {
   return (
     <FormDataProvider>
@@ -144,7 +144,7 @@ export default function App() {
 5. Split into two `Context`s to improve performance
 If parts of the app only uses the api part or only the state part we can split up the Context into two, to avoid unneccessary re-rendering.
 
-```ts
+```tsx
 type State = {
   name: string;
   country: Country;
@@ -184,7 +184,7 @@ export const useFormAPI = () => useContext(FormAPIContext);
 ```
 
 Consume like this:
-```ts
+```tsx
 export const SelectCountryFormComponent = () => {
   const { onCountryChange } = useFormAPI();
 
@@ -195,7 +195,7 @@ export const SelectCountryFormComponent = () => {
 ### Data Fetching
 
 #### Simple Fetch
-```ts
+```tsx
 const Component = () => {
   const [data, setData] = useState();
 
@@ -222,7 +222,7 @@ const Component = () => {
 #### Data providers to abstract away fetching
 Ability to fetch data in one place of the app and access that data in another, bypassing all components in between. Essentially like a mini-caching layer per request.
 
-```ts
+```tsx
 const Context = React.createContext();
 
 export const CommentsDataProvider = ({ children }) => {
@@ -250,7 +250,7 @@ Source: https://www.developerway.com/posts/higher-order-components-in-react-hook
 * The key here is the return part of the function - it’s **just a component**, like any other component.
 
 Simple Example:
-```ts
+```tsx
 // accept a Component as an argument
 const withSomeLogic = (Component) => {
   // do something
@@ -258,4 +258,9 @@ const withSomeLogic = (Component) => {
   // return a component that renders the component from the argument
   return (props) => <Component {...props} />;
 };
+```
+
+```tsx
+const Button = ({ onClick }) => <button onClick={func}>Button</button>;
+const ButtonWithSomeLogic = withSomeLogic(Button);
 ```
