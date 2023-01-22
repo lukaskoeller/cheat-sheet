@@ -264,3 +264,39 @@ const withSomeLogic = (Component) => {
 const Button = ({ onClick }) => <button onClick={func}>Button</button>;
 const ButtonWithSomeLogic = withSomeLogic(Button);
 ```
+
+#### Use Case #1: Enhancing callbacks and React lifecycle events
+
+> \[...] encapsulate the logic of “something triggered onClick callback - send some logging events” somewhere, and then just re-used it in any component I want, without changing the code of those components in any way.
+
+Create a `withLoggingOnClick` function, that:
+
+* accepts a component as an argument
+* intercepts its onClick callback
+* sends the data that I need to the whatever external framework is used for logging
+* returns the component with onClick callback intact for further use
+
+```tsx
+type Base = { onClick: () => void };
+
+// just a function that accepts Component as an argument
+export const withLoggingOnClick = <TProps extends Base>(Component: ComponentType<TProps>) => {
+  return (props: TProps) => {
+    const onClick = () => {
+      console.log('Log on click something');
+      // don't forget to call onClick that is coming from props!
+      // we're overriding it below
+      props.onClick();
+    };
+
+    // return original component with all the props
+    // and overriding onClick with our own callback
+    return <Component {...props} onClick={onClick} />;
+  };
+};
+
+Usage
+```tsx
+export const ButtonWithLoggingOnClick = withLoggingOnClick(SimpleButton);
+```
+```
