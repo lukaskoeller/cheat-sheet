@@ -1,5 +1,51 @@
 # cheat-sheet
 
+## Naming convetions
+Source: https://www.developerway.com/posts/react-project-structure
+
+Use npm/pnpm workspaces and split up in packages.
+
+```
+/my-feature-name
+  /assets     // if I have some images, then they go into their own folder
+    logo.svg
+  index.tsx   // main feature code
+  test.tsx    // tests for the feature if needed
+  stories.tsx // stories for storybooks if I use them
+  styles.(tsx|scss) // I like to separate styles from component's logic
+  types.ts    // if types are shared between different files within the feature
+  utils.ts    // very simple utils that are used *only* in this feature
+  hooks.tsx   // small hooks that I use *only* in this feature
+```
+
+```
+/my-feature-name
+  ... // index the same as before
+  /header
+    index.tsx
+    ... // etc, exactly the same naming here
+  /footer
+    index.tsx
+    ... // etc, exactly the same naming here
+```
+
+Example: https://github.com/developerway/example-react-project
+
+### Layers
+* “data” layer - queries, mutation and other things that are responsible for connecting to the external data sources and transforming it. Used only by UI layer, doesn’t depend on any other layers.
+* “shared” layer - various utils, functions, hooks, mini-components, types and constants that are used across the entire package by all other layers. Doesn’t depend on any other layers.
+* “ui” layer - the actual feature implementation. Depends on “data” and “shared” layers, no-one depends on it
+* (“state”) layer - if external state management library is used. Bridge between “data” and “ui”. Is using “shared” and “data”, while “ui” is using “state”.
+
+```
+/my-feature-package
+  /shared
+  /ui
+  /data
+  index.ts
+  package.json
+```
+
 ## React
 
 ### `useMemo` and `useCallback`
