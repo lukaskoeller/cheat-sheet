@@ -58,7 +58,14 @@ Source: https://programmingwithmosh.com/javascript/javascript-event-bubbling-and
 * When **users interact** with the page, their actions are captured in form of **events**.
 * In order to do something in response to an event, you need to register a listener
 
-### 
+### Event Bubbling
+* Event bubbling is the **propagation** of an **event** from its **origin towards** the **root element**.
+* The bubbling effect is only noticeable when at least one ancestor of the event’s origin has a listener for the same type of event.
+* prevent bubbling from occurring, you can use the `stopPropagation` method.
+
+### Event Delegation
+* Deals with handling dozens of event listeners.
+* In simple words, it leverages the bubbling effect to extract the handling logic of an event to a common ancestor of the elements where this event is triggered.
 
 # React
 
