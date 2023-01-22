@@ -17,6 +17,7 @@
 * Only memoize if: every single prop and the component itself are memoized.
 
 ### Context
+> Reference: https://www.developerway.com/posts/how-to-write-performant-react-apps-with-context
 
 1. Create Context
 ```ts
@@ -137,4 +138,54 @@ export const SelectCountryFormComponent = () => {
 
   return <SelectCountry onChange={onCountryChange} />;
 };
+```
+
+### Data Fetching
+
+#### Simple Fetch
+```ts
+const Component = () => {
+  const [data, setData] = useState();
+
+  useEffect(() => {
+    // fetch data
+    const dataFetch = async () => {
+      const data = await (
+        await fetch(
+          "https://run.mocky.io/v3/b3bcb9d2-d8e9-43c5-bfb7-0062c85be6f9"
+        )
+      ).json();
+
+      // set state when the data received
+      setState(data);
+    };
+
+    dataFetch();
+  }, []);
+
+  return <>...</>
+}
+```
+
+#### Data providers to abstract away fetching
+Ability to fetch data in one place of the app and access that data in another, bypassing all components in between. Essentially like a mini-caching layer per request.
+
+```ts
+const Context = React.createContext();
+
+export const CommentsDataProvider = ({ children }) => {
+  const [comments, setComments] = useState();
+
+  useEffect(async () => {
+    fetch('/get-comments').then(data => data.json()).then(data => setComments(data));
+  }, [])
+
+  return (
+    <Context.Provider value={comments}>
+      {children}
+    </Context.Provider>
+  )
+}
+
+export const useComments = () => useContext(Context);
 ```
