@@ -241,3 +241,21 @@ export const CommentsDataProvider = ({ children }) => {
 
 export const useComments = () => useContext(Context);
 ```
+
+### Higher-Order Components (HOC)
+Source: https://www.developerway.com/posts/higher-order-components-in-react-hooks-era
+
+> Advanced technique to re-use components logic that is used for cross-cutting concerns.
+
+* The key here is the return part of the function - it’s **just a component**, like any other component.
+
+Simple Example:
+```ts
+// accept a Component as an argument
+const withSomeLogic = (Component) => {
+  // do something
+
+  // return a component that renders the component from the argument
+  return (props) => <Component {...props} />;
+};
+```
