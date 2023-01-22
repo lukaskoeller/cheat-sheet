@@ -1,6 +1,6 @@
 # cheat-sheet
 
-## Naming convetions
+## Naming conventions
 Source: https://www.developerway.com/posts/react-project-structure
 
 Use npm/pnpm workspaces and split up in packages.
@@ -36,6 +36,12 @@ Example: https://github.com/developerway/example-react-project
 * “shared” layer - various utils, functions, hooks, mini-components, types and constants that are used across the entire package by all other layers. Doesn’t depend on any other layers.
 * “ui” layer - the actual feature implementation. Depends on “data” and “shared” layers, no-one depends on it
 * (“state”) layer - if external state management library is used. Bridge between “data” and “ui”. Is using “shared” and “data”, while “ui” is using “state”.
+
+We can structure a layer in a hierarchical way. The rules are:
+
+* only main files (i.e. “index.ts”) in a folder can have sub-components (sub-modules) and can import them
+* you can import only from the “children”, not from “neighbours”
+* you can not skip a level and can only import from direct children
 
 ```
 /my-feature-package
