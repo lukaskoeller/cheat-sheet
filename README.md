@@ -69,6 +69,14 @@ Source: https://programmingwithmosh.com/javascript/javascript-event-bubbling-and
 
 # React
 
+## Performance
+Source: https://www.developerway.com/posts/how-to-write-performant-react-code
+
+* Rule #1: If the only reason why you want to extract your inline functions in props into useCallback is to avoid re-renders of children components: don’t. It doesn’t work.
+* Rule #2: If your component manages state, find parts of the render tree that don’t depend on the changed state and memoise them to minimize their re-renders.
+* Rule #3. Never create new components inside the render function of another component.
+* Rule #4. When using context, make sure that value property is always memoised if it’s not a number, string or boolean.
+
 ## `useMemo` and `useCallback`
 * **Wth memoization**: between re-renders - cache it during the initial render, and return the reference to that saved value during consecutive renders.
 * **Without memoization**: non-primitive values (arrays, object, function) - re-created on every render.
