@@ -1,6 +1,4 @@
-# cheat-sheet
-
-## Naming conventions
+# Naming conventions
 Source: https://www.developerway.com/posts/react-project-structure
 
 Use npm/pnpm workspaces and split up in packages.
@@ -31,7 +29,7 @@ Use npm/pnpm workspaces and split up in packages.
 
 Example: https://github.com/developerway/example-react-project
 
-### Layers
+## Layers
 * “data” layer - queries, mutation and other things that are responsible for connecting to the external data sources and transforming it. Used only by UI layer, doesn’t depend on any other layers.
 * “shared” layer - various utils, functions, hooks, mini-components, types and constants that are used across the entire package by all other layers. Doesn’t depend on any other layers.
 * “ui” layer - the actual feature implementation. Depends on “data” and “shared” layers, no-one depends on it
@@ -52,9 +50,19 @@ We can structure a layer in a hierarchical way. The rules are:
   package.json
 ```
 
-## React
+# JavaScript
 
-### `useMemo` and `useCallback`
+## Event Delegation & Bubbling
+Source: https://programmingwithmosh.com/javascript/javascript-event-bubbling-and-event-delegation/
+
+* When **users interact** with the page, their actions are captured in form of **events**.
+* In order to do something in response to an event, you need to register a listener
+
+### 
+
+# React
+
+## `useMemo` and `useCallback`
 * **Wth memoization**: between re-renders - cache it during the initial render, and return the reference to that saved value during consecutive renders.
 * **Without memoization**: non-primitive values (arrays, object, function) - re-created on every render.
 * **Disadvantage**: On inital render, they slow down the app
@@ -68,7 +76,7 @@ We can structure a layer in a hierarchical way. The rules are:
 
 * Only memoize if: every single prop and the component itself are memoized.
 
-### Context
+## Context
 > Reference: https://www.developerway.com/posts/how-to-write-performant-react-apps-with-context
 
 1. Create Context
@@ -192,9 +200,9 @@ export const SelectCountryFormComponent = () => {
 };
 ```
 
-### Data Fetching
+## Data Fetching
 
-#### Simple Fetch
+### Simple Fetch
 ```tsx
 const Component = () => {
   const [data, setData] = useState();
@@ -219,7 +227,7 @@ const Component = () => {
 }
 ```
 
-#### Data providers to abstract away fetching
+### Data providers to abstract away fetching
 Ability to fetch data in one place of the app and access that data in another, bypassing all components in between. Essentially like a mini-caching layer per request.
 
 ```tsx
@@ -242,7 +250,7 @@ export const CommentsDataProvider = ({ children }) => {
 export const useComments = () => useContext(Context);
 ```
 
-### Higher-Order Components (HOC)
+## Higher-Order Components (HOC)
 Source: https://www.developerway.com/posts/higher-order-components-in-react-hooks-era
 
 > Advanced technique to re-use components logic that is used for cross-cutting concerns.
@@ -265,7 +273,7 @@ const Button = ({ onClick }) => <button onClick={func}>Button</button>;
 const ButtonWithSomeLogic = withSomeLogic(Button);
 ```
 
-#### Use Case #1: Enhancing callbacks and React lifecycle events
+### Use Case #1: Enhancing callbacks and React lifecycle events
 
 > \[...] encapsulate the logic of “something triggered onClick callback - send some logging events” somewhere, and then just re-used it in any component I want, without changing the code of those components in any way.
 
@@ -313,7 +321,7 @@ const Page = () => {
 };
 ```
 
-#### Use Case #2: Intercepting DOM events
+### Use Case #2: Intercepting DOM events
 
 > \[...] implement some sort of keyboard shortcuts functionality on your page. When specific keys are pressed, you want to do various things, like open dialogs, creating issues, etc.
 
@@ -339,7 +347,7 @@ const DropdownWithSupressedKeyPress = withSupressKeyPress(Dropdown);
 // etc
 ```
 
-#### Use Case #3: Context selectors
+### Use Case #3: Context selectors
 
 > When we have a Context, but we want to memoize parts of the value the context provides, we can use HOC to momoize the component that uses this part of 
 value of that context.
@@ -361,7 +369,7 @@ export const withFormIdSelector = <TProps extends unknown>(
 ```
 Sandbox: https://codesandbox.io/s/hocs-context-lwudbb?file=/src/page.tsx
 
-##### Generic React context selector
+#### Generic React context selector
 
 ```tsx
 export const withContextSelector = <TProps extends unknown, TValue extends unknown>(
