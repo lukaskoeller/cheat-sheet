@@ -276,27 +276,115 @@ Create a `withLoggingOnClick` function, that:
 * sends the data that I need to the whatever external framework is used for logging
 * returns the component with onClick callback intact for further use
 
+Use Cases:
+* to enhance callbacks and React lifecycle events with additional functionality, like sending logging or analytics events
+* to intercept DOM events, like blocking global keyboard shortcuts when a modal dialog is open
+* to extract a piece of Context without causing unnecessary re-renders in the component
+
 ```tsx
 type Base = { onClick: () => void };
-
-// just a function that accepts Component as an argument
-export const withLoggingOnClick = <TProps extends Base>(Component: ComponentType<TProps>) => {
-  return (props: TProps) => {
+export const withLoggingOnClickWithProps = <TProps extends Base>(Component: ComponentType<TProps>) => {
+  // our returned component will now have additional logText prop
+  return (props: TProps & { logText: string }) => {
+    
+    useEffect(() => {
+      console.log('log on mount');
+    }, []);
+  
     const onClick = () => {
-      console.log('Log on click something');
-      // don't forget to call onClick that is coming from props!
-      // we're overriding it below
+      // accessing it here, as any other props
+      console.log('Log on click: ', props.logText);
       props.onClick();
     };
 
-    // return original component with all the props
-    // and overriding onClick with our own callback
     return <Component {...props} onClick={onClick} />;
   };
 };
+```
 
 Usage
 ```tsx
-export const ButtonWithLoggingOnClick = withLoggingOnClick(SimpleButton);
+const Page = () => {
+  return (
+    <ButtonWithLoggingOnClickWithProps onClick={onClickCallback} logText="this is Page button">
+      Click me
+    </ButtonWithLoggingOnClickWithProps>
+  );
+};
 ```
+
+#### Use Case #2: Intercepting DOM events
+
+> \[...] implement some sort of keyboard shortcuts functionality on your page. When specific keys are pressed, you want to do various things, like open dialogs, creating issues, etc.
+
+```tsx
+export const withSupressKeyPress = <TProps extends unknown>(Component: ComponentType<TProps>) => {
+  return (props: TProps) => {
+    const onKeyPress = (event) => {
+      event.stopPropagation();
+    };
+
+    return (
+      <div onKeyPress={onKeyPress}>
+        <Component {...props} />
+      </div>
+    );
+  };
+};
+```
+
+```tsx
+const ModalWithSupressedKeyPress = withSupressKeyPress(Modal);
+const DropdownWithSupressedKeyPress = withSupressKeyPress(Dropdown);
+// etc
+```
+
+#### Use Case #3: Context selectors
+
+> When we have a Context, but we want to memoize parts of the value the context provides, we can use HOC to momoize the component that uses this part of 
+value of that context.
+
+```tsx
+export const withFormIdSelector = <TProps extends unknown>(
+  Component: ComponentType<TProps & { formId: string }>
+) => {
+  const MemoisedComponent = React.memo(Component) as ComponentType<
+    TProps & { formId: string }
+  >;
+
+  return (props: TProps) => {
+    const { id } = useFormContext();
+
+    return <MemoisedComponent {...props} formId={id} />;
+  };
+};
+```
+Sandbox: https://codesandbox.io/s/hocs-context-lwudbb?file=/src/page.tsx
+
+##### Generic React context selector
+
+```tsx
+export const withContextSelector = <TProps extends unknown, TValue extends unknown>(
+  Component: ComponentType<TProps & Record<string, TValue>>,
+  selectors: Record<string, (data: Context) => TValue>,
+): ComponentType<Record<string, TValue>> => {
+  // memoising component generally for every prop
+  const MemoisedComponent = React.memo(Component) as ComponentType<Record<string, TValue>>;
+
+  return (props: TProps & Record<string, TValue>) => {
+    // extracting everything from context
+    const data = useFormContext();
+
+    // mapping keys that are coming from "selectors" argument
+    // to data from context
+    const contextProps = Object.keys(selectors).reduce((acc, key) => {
+      acc[key] = selectors[key](data);
+
+      return acc;
+    }, {});
+
+    // spreading all props to the memoised component
+    return <MemoisedComponent {...props} {...contextProps} />;
+  };
+};
 ```
